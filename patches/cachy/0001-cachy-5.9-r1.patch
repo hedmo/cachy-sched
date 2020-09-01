@@ -1,44 +1,8 @@
-From a4a7f584442050e43a7c3e2dcf3c24a46af67396 Mon Sep 17 00:00:00 2001
-From: Hamad Al Marri <hamad.s.almarri@gmail.com>
-Date: Mon, 31 Aug 2020 02:18:19 +0000
-Subject: [PATCH] sched: Introduce the Cachy CPU scheduler v5.9
+From 9f39c7979a44606d04b4f1058dd16508ff06ef0c Mon Sep 17 00:00:00 2001
+From: Hamad Marri <hamad.s.almarri@gmail.com>
+Date: Mon, 31 Aug 2020 15:43:30 +0300
+Subject: [PATCH 1/2] cachy-5.9-r1
 
-Cachy-sched is a linux scheduler that utilizes CPU cache
-and it is based on Highest Response Ratio Next (HRRN) policy.
-
-About Cachy Scheduler
-
-- All balancing code is removed except for idle CPU balancing.
-  There is no periodic balancing, only idle CPU balancing is applied.
-  Once a task is assigned to a CPU, it sticks with it until another CPUS
-  got idle then this task might get pulled to new cpu. The reason of
-  disabling periodic balancing is to utilize the CPU cache of tasks.
-
-- No grouping for tasks, FAIR_GROUP_SCHED must be disabled.
-
-- No support for NUMA, NUMA must be disabled.
-
-- Each CPU has its own runqueue.
-
-- NORMAL runqueue is a linked list of sched_entities (instead of RB-Tree).
-
-- RT and other runqueues are just the same as the CFS's.
-
-- A task gets preempted in every tick. If the clock ticks in 250HZ
-  (i.e. CONFIG_HZ_250=y) then a task runs for 4 milliseconds and then got
-  preempted if there are other tasks in the runqueue.
-
-- Wake up tasks preempt currently running tasks if its HRRN value is higher.
-
-- This scheduler is designed for desktop usage since it is about responsiveness.
-  It may be not bad for servers.
-
-- Cachy might be good for mobiles or Android since it has high responsiveness.
-  Cachy need to be integrated to Android, I don't think the current version it
-  is ready to go without some tweeking and adapting to Android hacks.
-
-Signed-off-by: Alexandre Frade <kernel@xanmod.org>
-Signed-off-by: Hamad Al Marri <hamad.s.almarri@gmail.com>
 ---
  arch/x86/Kconfig      |     2 +
  include/linux/sched.h |     4 +
@@ -71,7 +35,7 @@ index 7101ac64bb20..189d9e99f939 100644
  	depends on X86_64 || (X86_32 && HIGHMEM64G && X86_BIGSMP)
  	default y if X86_BIGSMP
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 93ecd930efd3..8e9172eaa826 100644
+index afe01e232935..bd871edcfbe2 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
 @@ -451,6 +451,10 @@ struct sched_entity {
@@ -10361,7 +10325,7 @@ index 000000000000..141c40576a4b
 +}
 +EXPORT_SYMBOL_GPL(sched_trace_rq_nr_running);
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 2d95dc3f4644..8c3f2f73bd7a 100644
+index 2d95dc3f4644..be97774d0113 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
 @@ -3655,7 +3655,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
