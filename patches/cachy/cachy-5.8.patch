@@ -81,7 +81,7 @@ diff --color -rubN linux-5.8/kernel/sched/core.c ../linux-5.8-cachy/kernel/sched
  	unsigned long ptr = 0;
  	int i;
  
-+	printk(KERN_INFO "Cachy CPU scheduler v5.8 by Hamad Al Marri. Thanks to my wife Sarah for her patience.");
++	printk(KERN_INFO "Cachy CPU scheduler v5.8 by Hamad Al Marri.");
 +
  	wait_bit_init();
  
@@ -1749,17 +1749,3 @@ diff --color -rubN linux-5.8/kernel/sched/sched.h ../linux-5.8-cachy/kernel/sche
  	struct sched_entity	*curr;
  	struct sched_entity	*next;
  	struct sched_entity	*last;
-diff --color -rubN linux-5.8/Makefile ../linux-5.8-cachy/Makefile
---- linux-5.8/Makefile	2020-08-04 01:04:51.327366223 +1000
-+++ ../linux-5.8-cachy/Makefile	2020-08-04 00:13:59.710682597 +1000
-@@ -2,8 +2,8 @@
- VERSION = 5
- PATCHLEVEL = 8
- SUBLEVEL = 0
--EXTRAVERSION =
--NAME = Kleptomaniac Octopus
-+EXTRAVERSION = -cachy
-+NAME = Cachy
- 
- # *DOCUMENTATION*
- # To see a list of typical targets execute "make help"
